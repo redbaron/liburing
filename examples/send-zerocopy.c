@@ -177,11 +177,12 @@ static void do_tx(int domain, int type, int protocol)
 				io_uring_prep_send(sqe, fd, payload,
 						   cfg_payload_len, 0);
 			else {
-				io_uring_prep_send_zc(sqe, fd, payload,
-						     cfg_payload_len, msg_flags, 0);
 				if (cfg_fixed_buf) {
-					sqe->ioprio |= IORING_RECVSEND_FIXED_BUF;
-					sqe->buf_index = buf_idx;
+				        io_uring_prep_send_zc_fixed(sqe, fd, payload,
+						                   cfg_payload_len, msg_flags, 0, buf_idx);
+				} else {
+				        io_uring_prep_send_zc(sqe, fd, payload,
+						             cfg_payload_len, msg_flags, 0);
 				}
 			}
 			sqe->user_data = 1;
